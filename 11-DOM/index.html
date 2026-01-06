@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>DOM Mastery</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        padding: 20px;
+      }
+      .box {
+        border: 2px solid #333;
+        padding: 10px;
+        margin-bottom: 10px;
+      }
+      .highlight {
+        background-color: yellow;
+      }
+      .hidden {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="main-container" class="box">
+      <h1 id="main-title">Original Title</h1>
+      <p class="description">This is a description text.</p>
+
+      <ul id="item-list">
+        <li class="item">Item 1</li>
+        <li class="item">Item 2</li>
+      </ul>
+
+      <button id="action-btn">Click Me to Change DOM</button>
+    </div>
+
+    <script>
+      console.log("--- 1. SELECTING ELEMENTS ---");
+
+      // Old School (Specific & Fast)
+      const title = document.getElementById("main-title");
+
+      // Modern Standard (Flexible - selects like CSS)
+      const container = document.querySelector("#main-container"); // Selects by ID
+      const firstItem = document.querySelector(".item"); // Selects first match of class
+      const allItems = document.querySelectorAll(".item"); // Selects ALL matches (NodeList)
+
+      console.log("Selected Title:", title);
+      console.log("All List Items:", allItems); // NodeList(2) [li, li]
+
+      console.log("\n--- 2. MANIPULATING CONTENT ---");
+
+      // innerText: Respects CSS (won't show hidden text)
+      // textContent: Raw text (faster, shows everything inside)
+      // innerHTML: Parses HTML tags (Use carefully! Security risk)
+
+      title.innerText = "DOM Manipulation is Fun!";
+
+      const desc = document.querySelector(".description");
+      desc.innerHTML = "This text was <strong>bolded</strong> by JS.";
+
+      console.log("\n--- 3. MANIPULATING STYLES & CLASSES ---");
+
+      // Direct Style (Inline styles) - Not recommended for big changes
+      title.style.color = "blue";
+      title.style.fontSize = "24px";
+
+      // ClassList (Best Practice) - Add/Remove CSS classes
+      container.classList.add("highlight");
+      // container.classList.remove("box");
+      // container.classList.toggle("dark-mode");
+
+      console.log("\n--- 4. TRAVERSING THE DOM (Walking the Tree) ---");
+
+      const list = document.querySelector("#item-list");
+
+      console.log("Parent:", list.parentElement); // The div container
+      console.log("Children:", list.children); // HTMLCollection of li's
+      console.log("Next Sibling:", list.nextElementSibling); // The button
+
+      console.log("\n--- 5. CREATING & ADDING ELEMENTS ---");
+
+      // Step A: Create the element
+      const newItem = document.createElement("li");
+
+      // Step B: Add content
+      newItem.textContent = "New Item 3 (Added by JS)";
+      newItem.classList.add("item");
+
+      // Step C: Append (Add to DOM)
+      list.appendChild(newItem); // Adds to end
+      // list.prepend(newItem);  // Adds to start
+
+      console.log("\n--- 6. EVENT LISTENERS (Interactivity) ---");
+
+      const btn = document.getElementById("action-btn");
+
+      // Syntax: element.addEventListener(event, function)
+      btn.addEventListener("click", function (event) {
+        // Toggle a class on the title
+        title.classList.toggle("hidden");
+
+        // Change button text
+        if (btn.textContent === "Hide Title") {
+          btn.textContent = "Show Title";
+        } else {
+          btn.textContent = "Hide Title";
+        }
+
+        console.log("Button clicked!", event.target);
+      });
+    </script>
+  </body>
+</html>
