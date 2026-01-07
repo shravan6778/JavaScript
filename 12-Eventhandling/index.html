@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>JS Event Mastery</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        padding: 20px;
+        line-height: 1.5;
+      }
+      .section {
+        margin-bottom: 30px;
+        padding: 15px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+      }
+
+      /* For Bubbling Demo */
+      .box {
+        padding: 20px;
+        border: 2px solid black;
+        cursor: pointer;
+      }
+      #grandparent {
+        background-color: #ffcccc;
+      }
+      #parent {
+        background-color: #ccffcc;
+      }
+      #child {
+        background-color: #ccccff;
+      }
+
+      /* For Delegation Demo */
+      li {
+        padding: 5px;
+        cursor: pointer;
+      }
+      li:hover {
+        background-color: #eee;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="section">
+      <h3>1. Basic Click & The Event Object</h3>
+      <button id="basic-btn">Click Me (Check Console)</button>
+    </div>
+
+    <div class="section">
+      <h3>2. Prevent Default (Stop Reload)</h3>
+      <form id="my-form">
+        <input type="text" placeholder="Type something..." required />
+        <button type="submit">Submit Form</button>
+      </form>
+      <p id="form-msg" style="color: green"></p>
+    </div>
+
+    <div class="section">
+      <h3>3. Event Propagation (Bubbling)</h3>
+      <p>Click the innermost box and watch the console.</p>
+      <div id="grandparent" class="box">
+        Grandparent
+        <div id="parent" class="box">
+          Parent
+          <div id="child" class="box">Child</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3>4. Event Delegation (Efficient Lists)</h3>
+      <ul id="todo-list">
+        <li>Item 1</li>
+        <li>Item 2</li>
+        <li>Item 3</li>
+      </ul>
+      <button id="add-item">Add New Item</button>
+    </div>
+
+    <script>
+      console.log("--- EVENT HANDLING DEMO STARTED ---");
+
+      // --- 1. BASIC LISTENER & THE EVENT OBJECT (e) ---
+      const btn = document.getElementById("basic-btn");
+
+      // We pass 'e' (the event object) to get details about what happened
+      btn.addEventListener("click", function (e) {
+        console.log("--- 1. BASIC CLICK ---");
+        console.log("Event Type:", e.type); // "click"
+        console.log("Target Element:", e.target); // The <button> element itself
+        console.log("Mouse X Position:", e.clientX);
+        alert("Button Clicked! Check console for details.");
+      });
+
+      // --- 2. PREVENT DEFAULT (Stopping browser habits) ---
+      // Browsers automatically reload pages when forms are submitted. We stop that.
+      const form = document.getElementById("my-form");
+      const msg = document.getElementById("form-msg");
+
+      form.addEventListener("submit", function (e) {
+        e.preventDefault(); // STOP the page reload!
+
+        console.log("--- 2. FORM SUBMIT ---");
+        console.log("Form submission stopped. JS handling it now.");
+        msg.textContent = "✅ Form submitted without page reload!";
+      });
+
+      // --- 3. BUBBLING & PROPAGATION ---
+      // Events "bubble up" from the target to the top of the DOM.
+
+      const grandparent = document.getElementById("grandparent");
+      const parent = document.getElementById("parent");
+      const child = document.getElementById("child");
+
+      grandparent.addEventListener("click", (e) =>
+        console.log("Grandparent Clicked")
+      );
+      parent.addEventListener("click", (e) => console.log("Parent Clicked"));
+
+      child.addEventListener("click", function (e) {
+        console.log("--- 3. BUBBLING ---");
+        console.log("Child Clicked (Target)");
+
+        // UNCOMMENT the line below to stop the bubbling!
+        // e.stopPropagation();
+      });
+
+      // --- 4. EVENT DELEGATION (The Smart Way) ---
+      // Instead of adding listeners to every single <li>, we add ONE to the <ul>.
+
+      const list = document.getElementById("todo-list");
+      const addBtn = document.getElementById("add-item");
+
+      // A. The Delegation Logic
+      list.addEventListener("click", function (e) {
+        // Check if the thing clicked was actually an <li>
+        if (e.target.tagName === "LI") {
+          console.log("--- 4. DELEGATION ---");
+          console.log("You clicked item:", e.target.textContent);
+          e.target.style.textDecoration = "line-through"; // Cross it out
+        }
+      });
+
+      // B. Adding new items to prove it works
+      addBtn.addEventListener("click", () => {
+        const newItem = document.createElement("li");
+        newItem.textContent = `Item ${list.children.length + 1}`;
+        list.appendChild(newItem);
+        // Notice: We don't need to add an event listener to this new item!
+        // The <ul> handles it automatically.
+      });
+    </script>
+  </body>
+</html>
